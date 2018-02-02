@@ -1,2 +1,4 @@
 sandbox/*
 logs/*
+out/*
+.snakemake
