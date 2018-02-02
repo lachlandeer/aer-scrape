@@ -13,6 +13,21 @@ AER_WEB = "https://www.aeaweb.org/journals/aer/issues"
 
 # --- Build Rules --- #
 
+rule aer_article_links:
+    input:
+        script = config["src_scraper"] + "get_article_links.py",
+        links  = config["out_links"]   + "aer_issues.pickle"
+    params:
+        out_path = config[out_article_links]
+    output:
+        links = config[out_article_links] + "{aer_links}.pickle"
+    log:
+        config["log"] + "aer_article_links.txt"
+    shell:
+        "python {input.script} \
+            --issues {input.links} \
+            --outPath {params.out_path} > {log}"
+
 rule aer_issues:
     input:
         script = config["src_scraper"] + "scrape_aer_issues.py"
