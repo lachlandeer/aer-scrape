@@ -69,7 +69,7 @@ links  = [iElem.get_attribute("href") for iElem in elements]
 driver.quit()
 
 # filter out the links to issues
-regex       = re.compile(r'issues/[0-9]{3}$')
+regex       = re.compile(r'issues/[0-9]{2,3}$')
 issue_links = list(filter(regex.search, links))
 
 with open(out_data, 'wb') as fp:
