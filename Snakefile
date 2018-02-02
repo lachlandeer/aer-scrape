@@ -19,7 +19,7 @@ rule aer_issues:
     params:
         link = AER_WEB
     output:
-        issue_links = config["out_links"] + "issue_links.csv"
+        issue_links = config["out_links"] + "aer_issues.pickle"
     log:
         config["log"] + "aer_issues.txt"
     shell:
