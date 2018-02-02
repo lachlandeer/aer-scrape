@@ -2,3 +2,7 @@ ROOT: "."
 src: "src/"
 log: "logs/"
 out: "out/"
+
+src_scraper: "src/scrapers/"
+
+out_links: "out/links/"
