@@ -7,3 +7,4 @@ src_scraper: "src/scrapers/"
 
 out_links: "out/links/"
 out_article_links: "out/links/article/"
+out_data: "out/data/"

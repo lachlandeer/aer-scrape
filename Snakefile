@@ -12,6 +12,19 @@ configfile: "config.yaml"
 AER_WEB = "https://www.aeaweb.org/journals/aer/issues"
 
 # --- Build Rules --- #
+rule aer_issue_data:
+    input:
+        script = config["src_scraper"] + "process_aea_issue.py",
+        links  = config["out_article_links"] + "0.pickle",
+    output:
+        data   = config["out_data"] + "aer_0.csv"
+    log:
+        config["log"] + "aer_0.txt"
+    shell:
+        "python {input.script} \
+            --indata {input.links} \
+            --outdata {output.data}"
+
 rule get_aer_article_lengths:
     input:
         dynamic(config["out_article_links"] + "{aer_links}.pickle")
