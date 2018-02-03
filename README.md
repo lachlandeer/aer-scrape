@@ -8,7 +8,7 @@ We use `python` and `selenium` to control a headless instance of Google chrome
 To run the code:
 1. install chromedriver following the receipe [here](https://pp4rs.github.io/installation-guide/webscraping_drivers/)
 2. Install Snakemake from commnad line: `pip install snakemake`
-3. Ensure all python packages are installed from command line:  `pip -r requirements.txt`
+3. Ensure all python packages are installed from command line:  `pip install -r requirements.txt`
 4. Run `snakemake` from the commad line
 
 Tested on: Ubuntu: 16.04
