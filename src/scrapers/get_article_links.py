@@ -86,8 +86,8 @@ for idx, iLink in enumerate(issue_list):
 
         driver.quit()
         time.sleep(randint(10, 15))
-    except:
-        driver.quit()
+    # except:
+    #     driver.quit()
     finally:
         driver.quit()
         time.sleep(randint(10, 15))

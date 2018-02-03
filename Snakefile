@@ -29,7 +29,7 @@ rule aer_issue_data:
             --indata {input.links} \
             --outdata {output.data} &> {log}"
 
-rule get_aer_article_lengths:
+rule get_aer_article_links:
     input:
         dynamic(config["out_article_links"] + "{aer_links}.pickle")
 
