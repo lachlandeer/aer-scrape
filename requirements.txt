@@ -1,0 +1,10 @@
+decorator==4.2.1
+numpy==1.14.0
+pandas==0.22.0
+py==1.5.2
+python-dateutil==2.6.1
+pytz==2017.3
+retry==0.9.2
+selenium==3.8.1
+six==1.11.0
+timeout-decorator==0.4.0
