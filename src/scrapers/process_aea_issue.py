@@ -18,6 +18,9 @@ from selenium.common.exceptions import NoSuchElementException
 from selenium.common.exceptions import TimeoutException
 
 # --- Functions --- #
+@retry(TimeoutError, tries = 5)
+@timeout(10)
+
 def get_with_retry(driver, url):
     print("Going to link : ", url)
     driver.get(url)
@@ -60,10 +63,7 @@ def get_jel_codes(payload):
     return jel_string
 
 def process_article(candidate_url, headless = True):
-
     options = webdriver.ChromeOptions()
-    @retry(TimeoutError, tries = 5)
-    @timeout(10)
 
     if headless == True:
         options.add_argument("--headless")
@@ -72,7 +72,7 @@ def process_article(candidate_url, headless = True):
 
     try:
         # Load page and get all links
-        get_with_retry(driver, iLink)
+        get_with_retry(driver, candidate_url)
 
         title     = get_title(driver)
         authors   = get_authors(driver)
@@ -107,4 +107,31 @@ def process_journal_issue(in_path):
         article_data = process_article(iLink, headless = True)
         issue_data   = issue_data.append(article_data, ignore_index=True)
 
-#if __name__ == "__main__":
+    return issue_data
+
+# Main execution
+if __name__ == "__main__":
+    # CLI parser
+    CLI = argparse.ArgumentParser()
+    CLI.add_argument(
+      "--indata",  # name on the CLI - drop the `--` for positional/required parameters
+      nargs   = "*",  # 0 or more values expected => creates a list
+      type    = str,
+      default = "None"
+    )
+    CLI.add_argument(
+      "--outdata",
+      nargs   = "*",
+      type    = str,  # any type/callable can be used here
+      default = "out/",
+    )
+
+    args          = CLI.parse_args()
+    issue_links   = args.indata[0]
+    out_data      = args.outdata[0]
+
+    print("Issue links stored in:  ", issue_links)
+    print("Article links saved to: ", out_data)
+
+    issue_data = process_journal_issue(issue_links)
+    issue_data.to_csv(out_data, index = False)

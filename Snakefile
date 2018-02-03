@@ -23,7 +23,7 @@ rule aer_issue_data:
     shell:
         "python {input.script} \
             --indata {input.links} \
-            --outdata {output.data}"
+            --outdata {output.data} &> {log}"
 
 rule get_aer_article_lengths:
     input:
