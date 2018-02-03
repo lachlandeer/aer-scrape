@@ -29,7 +29,7 @@ rule aer_article_links:
     shell:
         "python {input.script} \
             --issues {input.links} \
-            --outpath {params.out_path} > {log}"
+            --outpath {params.out_path} &> {log}"
 
 rule aer_issues:
     input:

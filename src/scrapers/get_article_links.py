@@ -60,6 +60,7 @@ options.add_argument("--headless")
 @retry(TimeoutError, tries = 5)
 @timeout(10)
 def get_with_retry(driver, url):
+    print("Going to link ", idx, ": ", iLink)
     driver.get(url)
 
 # --- Read in article links --- #
@@ -70,10 +71,9 @@ for idx, iLink in enumerate(issue_list):
     driver = webdriver.Chrome(chrome_options = options)
     # deal with possible timeouts
     try:
-        print("Going to link ", idx, ": ", iLink)
-        get_with_retry(driver, iLink)
         # Load page and get all links
-        driver.get(issue_list[idx])
+        get_with_retry(driver, iLink)
+        #driver.get(issue_list[idx])
         payload  = driver.find_element_by_class_name('journal-article-group')
         elements = payload.find_elements_by_xpath("//a[@href]")
         links    = [iElem.get_attribute("href") for iElem in elements]
@@ -86,5 +86,8 @@ for idx, iLink in enumerate(issue_list):
 
         driver.quit()
         time.sleep(randint(10, 15))
+    except:
+        driver.quit()
     finally:
         driver.quit()
+        time.sleep(randint(10, 15))
