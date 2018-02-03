@@ -23,6 +23,8 @@ import re
 import pickle
 import argparse
 import time
+from retry import retry
+from timeout_decorator import timeout, TimeoutError
 from random import randint
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
@@ -55,25 +57,34 @@ print("Article links saved to: ", out_path)
 # Configure selenium scraper
 options = webdriver.ChromeOptions()
 options.add_argument("--headless")
-driver = webdriver.Chrome(chrome_options = options)
+@retry(TimeoutError, tries = 5)
+@timeout(10)
+def get_with_retry(driver, url):
+    driver.get(url)
 
 # --- Read in article links --- #
 with open (issue_links, 'rb') as fp:
     issue_list = pickle.load(fp)
 
 for idx, iLink in enumerate(issue_list):
-    print("Going to link ", idx, ": ", iLink)
+    driver = webdriver.Chrome(chrome_options = options)
+    # deal with possible timeouts
+    try:
+        print("Going to link ", idx, ": ", iLink)
+        get_with_retry(driver, iLink)
+        # Load page and get all links
+        driver.get(issue_list[idx])
+        payload  = driver.find_element_by_class_name('journal-article-group')
+        elements = payload.find_elements_by_xpath("//a[@href]")
+        links    = [iElem.get_attribute("href") for iElem in elements]
+        # filter out the links that are articles
+        regex         = re.compile(r'articles\?id\=')
+        article_links = list(filter(regex.search, links))
+        # save to disk
+        with open(out_path + str(idx) + ".pickle", 'wb') as fp:
+            pickle.dump(article_links, fp)
 
-    # Load page and get all links
-    driver.get(issue_list[idx])
-    payload  = driver.find_element_by_class_name('journal-article-group')
-    elements = payload.find_elements_by_xpath("//a[@href]")
-    links    = [iElem.get_attribute("href") for iElem in elements]
-    # filter out the links that are articles
-    regex         = re.compile(r'articles\?id\=')
-    article_links = list(filter(regex.search, links))
-    # save to disk
-    with open(out_path + str(idx) + ".pickle", 'wb') as fp:
-        pickle.dump(article_links, fp)
-
-    time.sleep(randint(5, 10))
+        driver.quit()
+        time.sleep(randint(10, 15))
+    finally:
+        driver.quit()
